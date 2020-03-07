@@ -8,11 +8,14 @@ const rssHemnetUrl = process.env.RSS_HEMNET_URL;
 
 app.get('/', (req, res) => {
     axios.get(rssHemnetUrl)
+        // Parse XML to Javascript object
         .then(response => xml2js.parseStringPromise(response.data))
-        .then((parsedResponse) => {
-           const jsonResponse = JSON.stringify(parsedResponse);
-           res.send(jsonResponse)
-        });
+        // Fetch only array of the apartments
+        .then((parsedResponse) => parsedResponse.rss.channel[0].item)
+        .then(items => {
+            res.send(JSON.stringify(items));
+        })
+        .catch((error) => res.send('There was an error: ', error));
 });
 
 app.listen(port, () => {
