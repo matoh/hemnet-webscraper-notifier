@@ -1,0 +1,27 @@
+{
+  "name": "hemnet-webscraper-notifier",
+  "version": "1.0.0",
+  "description": "Node app scraping Hemnet data and sending notifications",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "nodemon": "nodemon hemnet-webscraper-notifier"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatoH/hemnet-webscraper-notifier.git"
+  },
+  "author": "Matej Husar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MatoH/hemnet-webscraper-notifier/issues"
+  },
+  "homepage": "https://github.com/MatoH/hemnet-webscraper-notifier#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
