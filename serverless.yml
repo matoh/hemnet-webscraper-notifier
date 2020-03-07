@@ -1,31 +1,51 @@
-# For full config options, check the docs:
-#    docs.serverless.com
-
 service: hemnet-webscraper-notifier
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
 
 provider:
   name: aws
   runtime: nodejs12.x
+  memorySize: 128 # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
   region: eu-central-1
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    TABLE_SEARCH_RESULTS: ${self:provider.stage}-${self:service}-search-results
+  stage: dev # stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TABLE_SEARCH_RESULTS}"
 
 functions:
   webscrape:
     handler: handler.webscrape
+    name: ${self:provider.stage}-${self:service}
+    description: Node app scraping Hemnet data and sending notifications # optional, Description to publish to AWS
     events:
       # Invoke Lambda function every 5 minutes
-      - schedule: rate(5 minutes)
+      - schedule: rate(10 minutes)
+
+resources:
+  Resources:
+    webscraperDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+      Properties:
+        TableName: ${self:provider.environment.TABLE_SEARCH_RESULTS}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: pubDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: pubDate
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
