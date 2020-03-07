@@ -11,3 +11,6 @@ Node app scraping Hemnet data and sending notifications
 ```js
 RSS_HEMNET_URL=https://www.hemnet.se/mitt_hemnet/sparade_sokningar/xxxxxxxxx.xml npm run start
 ```
+
+
+serverless config credentials --provider aws --key AKIAUXCNIJYDFVNLNAZY --secret 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

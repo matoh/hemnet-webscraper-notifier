@@ -1,0 +1,31 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: hemnet-webscraper-notifier
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-central-1
+
+# you can overwrite defaults here
+#  stage: dev
+#  region: us-east-1
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+functions:
+  webscrape:
+    handler: handler.webscrape
+    events:
+      # Invoke Lambda function every 5 minutes
+      - schedule: rate(5 minutes)
