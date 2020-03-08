@@ -10,6 +10,7 @@ provider:
   stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   environment:
     TABLE_SEARCH_RESULTS: ${self:provider.stage}-${self:service}-search-results
+    RSS_HEMNET_URL: ${file(env.yml):RSS_HEMNET_URL}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -28,11 +29,15 @@ functions:
     handler: src/index.api
     name: ${self:provider.stage}-${self:service}
     timeout: 30
-    description: Serving node app scraping Hemnet data
+    description: Serving node app scraping Hemnet datax
     events:
       - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
           path: /{proxy+}
-          method: any
+          method: ANY
           cors: true
   webscrape:
     handler: src/index.cron
