@@ -1,8 +1,10 @@
 'use strict';
 
+const serverless = require('serverless-http');
 const express = require('express');
 const axios = require('axios');
 const xml2js = require('xml2js');
+const cronHandler = require('./handlers/cron');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,9 +19,17 @@ app.get('/', (req, res) => {
         .then(items => {
             res.send(JSON.stringify(items));
         })
-        .catch((error) => res.send('There was an error: ', error));
+        .catch((error) => {
+            console.log('error');
+            res.send('There was an error: ', error)
+        });
 });
 
 app.listen(port, () => {
     console.log(`App is listening on port ${port}, \nAccess app: http://localhost:${port}`)
 });
+
+module.exports = {
+  api: serverless(app),
+  cron: cronHandler
+};

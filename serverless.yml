@@ -1,14 +1,15 @@
 service: hemnet-webscraper-notifier
 
 provider:
-  name: aws
+  name: aws # https://serverless.com/framework/docs/providers/aws/
+  endpointType: REGIONAL
   runtime: nodejs12.x
   memorySize: 128 # optional, in MB, default is 1024
   timeout: 30 # optional, in seconds, default is 6
-  region: eu-central-1
+  region: ${self:custom.defaultRegion}
+  stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   environment:
     TABLE_SEARCH_RESULTS: ${self:provider.stage}-${self:service}-search-results
-  stage: dev # stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -19,12 +20,24 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TABLE_SEARCH_RESULTS}"
+  apiGateway:
+    description: API Gateway or serving node app scraping Hemnet data and sending notifications # Not Added, probably bug
 
 functions:
-  webscrape:
-    handler: handler.webscrape
+  http:
+    handler: src/index.api
     name: ${self:provider.stage}-${self:service}
-    description: Node app scraping Hemnet data and sending notifications # optional, Description to publish to AWS
+    timeout: 30
+    description: Serving node app scraping Hemnet data
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+  webscrape:
+    handler: src/index.cron
+    name: ${self:provider.stage}-${self:service}-cron
+    description: Crone - node app scraping Hemnet data and sending notifications # optional, Description to publish to AWS
     events:
       # Invoke Lambda function every 5 minutes
       - schedule: rate(10 minutes)
@@ -39,7 +52,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: pubDate
+          - AttributeName: pubDate # **2015-12-21T17:42:34Z** 2016-02-15 20150311T122706Z
             AttributeType: S
         KeySchema:
           - AttributeName: id
@@ -49,3 +62,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+custom:
+  defaultRegion: eu-central-1
+  defaultNodeEnv: dev

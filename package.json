@@ -2,10 +2,10 @@
   "name": "hemnet-webscraper-notifier",
   "version": "1.0.0",
   "description": "Node app scraping Hemnet data and sending notifications",
-  "main": "server.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
