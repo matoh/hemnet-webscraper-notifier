@@ -9,8 +9,8 @@ provider:
   region: ${self:custom.defaultRegion}
   stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   environment:
-    TABLE_SEARCH_RESULTS: ${self:provider.stage}-${self:service}-search-results
-    RSS_HEMNET_URL: ${file(env.yml):RSS_HEMNET_URL}
+    TABLE_SEARCH_RESULT: ${self:provider.stage}-${self:service}-search-resultx
+    RSS_HEMNET_URL: ${file(./secrets.yml):RSS_HEMNET_URL}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -20,7 +20,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TABLE_SEARCH_RESULTS}"
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TABLE_SEARCH_RESULT}"
   apiGateway:
     description: API Gateway or serving node app scraping Hemnet data and sending notifications # Not Added, probably bug
 
@@ -29,7 +29,7 @@ functions:
     handler: src/index.api
     name: ${self:provider.stage}-${self:service}
     timeout: 30
-    description: Serving node app scraping Hemnet datax
+    description: Serving node app scraping Hemnet data
     events:
       - http:
           path: /
@@ -44,7 +44,7 @@ functions:
     name: ${self:provider.stage}-${self:service}-cron
     description: Crone - node app scraping Hemnet data and sending notifications # optional, Description to publish to AWS
     events:
-      # Invoke Lambda function every 5 minutes
+      # Invoke Lambda function every 10 minutes
       - schedule: rate(10 minutes)
 
 resources:
@@ -53,10 +53,10 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
       Properties:
-        TableName: ${self:provider.environment.TABLE_SEARCH_RESULTS}
+        TableName: ${self:provider.environment.TABLE_SEARCH_RESULT}
         AttributeDefinitions:
           - AttributeName: id
-            AttributeType: S
+            AttributeType: N
           - AttributeName: pubDate # **2015-12-21T17:42:34Z** 2016-02-15 20150311T122706Z
             AttributeType: S
         KeySchema:
