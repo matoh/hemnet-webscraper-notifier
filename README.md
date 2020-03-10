@@ -13,4 +13,4 @@ RSS_HEMNET_URL=https://www.hemnet.se/mitt_hemnet/sparade_sokningar/xxxxxxxxx.xml
 ```
 
 ## How to start on remote environment
-Rename file `secrets.yml.example` to `secrets.yml` and replace secret values.
+Rename file `config.yml.example` to `config.yml` and replace secret values.

@@ -4,13 +4,15 @@ provider:
   name: aws # https://serverless.com/framework/docs/providers/aws/
   endpointType: REGIONAL
   runtime: nodejs12.x
-  memorySize: 128 # optional, in MB, default is 1024
+  memorySize: 256 # optional, in MB, default is 1024
   timeout: 30 # optional, in seconds, default is 6
   region: ${self:custom.defaultRegion}
   stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   environment:
     TABLE_SEARCH_RESULT: ${self:provider.stage}-${self:service}-search-resultx
     RSS_HEMNET_URL: ${file(./secrets.yml):RSS_HEMNET_URL}
+    SOURCE_EMAIL: ${file(./secrets.yml):SOURCE_EMAIL}
+    TO_EMAILS: ${file(./secrets.yml):TO_EMAILS}
   iamRoleStatements:
     - Effect: Allow
       Action:

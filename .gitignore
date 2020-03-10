@@ -106,5 +106,5 @@ dist
 # IDE Tools
 .idea
 
-# Secrets
-secrets.yml
+# Config
+config.yml
