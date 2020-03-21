@@ -10,5 +10,6 @@ parserOptions:
   ecmaVersion: 2018
   sourceType: module
 rules: {
-  'max-len': ["error", { "code": 120 }]
+  "max-len": ["error", { "code": 120 }],
+  "require-jsdoc": 0
 }
