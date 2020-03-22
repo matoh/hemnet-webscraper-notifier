@@ -9,10 +9,10 @@ provider:
   region: ${self:custom.defaultRegion}
   stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
   environment:
-    TABLE_SEARCH_RESULT: ${self:provider.stage}-${self:service}-search-resultx
-    RSS_HEMNET_URL: ${file(./secrets.yml):RSS_HEMNET_URL}
-    SOURCE_EMAIL: ${file(./secrets.yml):SOURCE_EMAIL}
-    TO_EMAILS: ${file(./secrets.yml):TO_EMAILS}
+    TABLE_SEARCH_RESULT: ${self:provider.stage}-${self:service}-search-result
+    RSS_HEMNET_URL: ${file(./config.yml):RSS_HEMNET_URL}
+    SOURCE_EMAIL: ${file(./config.yml):SOURCE_EMAIL}
+    TO_EMAILS: ${file(./config.yml):TO_EMAILS}
   iamRoleStatements:
     - Effect: Allow
       Action:

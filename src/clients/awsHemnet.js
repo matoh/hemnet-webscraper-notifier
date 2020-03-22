@@ -10,8 +10,9 @@ const dynamoDbClient = new aws.DynamoDB.DocumentClient();
  * @return {Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>}
  */
 function putItem(itemHemnet) {
+  const tableSearchResult = process.env.TABLE_SEARCH_RESULT;
   const itemInsert = {
-    TableName: 'dev-hemnet-webscraper-notifier-search-resultx',
+    TableName: tableSearchResult,
     Item: itemHemnet,
     ConditionExpression: '#id <> :id', // Prevent overwriting existing records
 
