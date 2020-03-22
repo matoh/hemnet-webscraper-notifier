@@ -15,7 +15,6 @@ function putItem(itemHemnet) {
     TableName: tableSearchResult,
     Item: itemHemnet,
     ConditionExpression: '#id <> :id', // Prevent overwriting existing records
-
     ExpressionAttributeNames: {
       '#id': 'id',
     },
@@ -25,6 +24,19 @@ function putItem(itemHemnet) {
   };
 
   return dynamoDbClient.put(itemInsert)
+      .promise();
+}
+
+/**
+ * Return all items from DB
+ * @return {Promise<PromiseResult<DocumentClient.ScanOutput, AWSError>>}
+ */
+function listItems() {
+  const tableSearchResult = process.env.TABLE_SEARCH_RESULT;
+  const params = {
+    TableName: tableSearchResult,
+  };
+  return dynamoDbClient.scan(params)
       .promise();
 }
 
@@ -66,6 +78,7 @@ function sendEmail(toEmails, itemHemnet, sourceEmail) {
 module.exports = {
   dynamoDb: {
     putItem,
+    listItems,
   },
   ses: {
     sendEmail,

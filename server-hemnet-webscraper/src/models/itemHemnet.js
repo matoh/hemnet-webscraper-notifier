@@ -9,7 +9,7 @@ class ItemHemnet {
   constructor(item) {
     // Match ID of the item - 16659410 - "https://www.hemnet.se/...sjomilsgatan-4-16659410"
     this.id = parseInt(item.link[0].match(/-(\d+$)/)[1]);
-    this.pubDate = parsePubDate(item.pubDate[0]).format(); // 2020-03-08T22:31:00+01:00
+    this.pubDate = parsePubDate(item.pubDate[0]).format('YYYY-MM-DD[T]HH:mm:ss'); // 2020-03-08T22:31:00
     this.title = item.title[0];
     this.description = item.description[0];
     this.link = item.link[0];
