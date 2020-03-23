@@ -70,9 +70,10 @@ function StoredItems() {
   return <div>
     <h1>Apartments for Selling</h1>
     <div>
-      {hemnetItems.map((item, key) =>
-          <HemnetItem key={item.id} hemnetItem={item}></HemnetItem>,
-      )}
+      {hemnetItems.sort((a, b) => (a.pubDate > b.pubDate) ? -1 : 1) // Sort by published date from latest
+          .map((item, key) =>
+              <HemnetItem key={item.id} hemnetItem={item}></HemnetItem>,
+          )}
     </div>
   </div>;
 }
@@ -82,6 +83,7 @@ function ScrapeItems() {
 
   // Similar to componentDidMount and componentDidUpdate
   useEffect(() => {
+    // TODO: From config, point to remote API
     axios.get('http://localhost:3000/api/scrapeItems')
         .then((items) => {
           console.log('Items', items);
@@ -95,9 +97,10 @@ function ScrapeItems() {
   return <div>
     <h1>Scraped Apartments for Selling</h1>
     <div>
-      {scrapedHemnetItems.map((item, key) =>
-          <ScrapedHemnetItem key={item.guid} scrapedHemnetItem={item}></ScrapedHemnetItem>,
-      )}
+      {scrapedHemnetItems.sort((a, b) => (a.pubDate > b.pubDate) ? -1 : 1) // Sort by published date from latest
+          .map((item, key) =>
+              <ScrapedHemnetItem key={item.guid} scrapedHemnetItem={item}></ScrapedHemnetItem>,
+          )}
     </div>
   </div>;
 }
