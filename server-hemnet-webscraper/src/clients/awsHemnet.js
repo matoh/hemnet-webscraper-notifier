@@ -58,6 +58,8 @@ function sendEmail(toEmails, itemHemnet, sourceEmail) {
           Data: `<h1>Enjoy New Webscraper Service</h1>
               <h3>Link: <a class="ulink" href="${itemHemnet.link}" target="_blank">New Appartment</a></h3>
               <h3>Description</h3><p>${itemHemnet.description}</p>
+              <h4>Distance from work: ${itemHemnet.distance}</h4>
+              <h4>Travel time from work: ${itemHemnet.duration}</h4>
               <h3>Apartment was posted: ${itemHemnet.pubDate}</h3>`,
         },
       },
