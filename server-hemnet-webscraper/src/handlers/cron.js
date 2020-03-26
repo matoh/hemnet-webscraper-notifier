@@ -9,7 +9,7 @@ const axios = require('axios');
 const rssHemnetUrl = process.env.RSS_HEMNET_URL;
 const sourceEmail = process.env.SOURCE_EMAIL;
 const toEmails = [process.env.TO_EMAILS];
-const ignoreItemsBeforeHours = process.env.IGNORE_ITEMS_BEFORE_HOURS || 14;
+const ignoreItemsBeforeHours = process.env.IGNORE_ITEMS_BEFORE_HOURS || 10;
 
 module.exports = (event, context, callback) => {
   fetchItemsFromHemnet(rssHemnetUrl)
