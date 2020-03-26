@@ -16,7 +16,7 @@ RSS_HEMNET_URL=https://www.hemnet.se/mitt_hemnet/sparade_sokningar/xxxxxxxxx.xml
 Trigger `handlers/cron.js` manually of from some route e.g: (call cronHandler({}, {}, () => {});)
 
 ## How to start on remote environment
-Rename file `config.yml.example` to `config.yml` and replace secret values.
+Rename file `.env.example` to `.env` and replace secret values.
 Run:
 ```sh
 serverless deploy

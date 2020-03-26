@@ -105,6 +105,3 @@ dist
 
 # IDE Tools
 .idea
-
-# Config
-config.yml
