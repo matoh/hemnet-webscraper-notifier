@@ -11,12 +11,14 @@ Node app scraping Hemnet data and sending notifications after matching saved sea
 ## How to start on local environment
 Start service with all mandatory environment variables:
 ```sh
-RSS_HEMNET_URL=https://www.hemnet.se/mitt_hemnet/sparade_sokningar/xxxxxxxxx.xml SOURCE_EMAIL=xxx@xxx.com TO_EMAILS=xxx@xxx.com TABLE_SEARCH_RESULT=dev-hemnet-webscraper-notifier-search-result npm run start
+nodemon -r dotenv/config
 ```
-Trigger `handlers/cron.js` manually of from some route e.g: (call cronHandler({}, {}, () => {});)
+Trigger `handlers/cron.js` manually e.g: (call cronHandler({}, {}, () => {});)
 
-## How to start on remote environment
-Rename file `.env.example` to `.env` and replace secret values.
+## How to configure local DEV environment
+Rename file `.env.example` to `.env` and replace configuration values.
+
+## How to deploy on AWS
 Run:
 ```sh
 serverless deploy

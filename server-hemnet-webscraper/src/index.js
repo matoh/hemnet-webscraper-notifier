@@ -1,18 +1,21 @@
 'use strict';
 
 const express = require('express');
+const cors = require('cors');
 const serverless = require('serverless-http');
 const cronHandler = require('./handlers/cron');
 const {dynamoDb} = require('./clients/awsHemnet');
 const {fetchItemsFromHemnet} = require('./services/searchService');
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 const rssHemnetUrl = process.env.RSS_HEMNET_URL;
 
+// cronHandler({}, {}, () => {});
+
 app.get('/', (req, res) => {
   res.send('It works!');
-  // cronHandler({}, {}, () => {});
 });
 
 app.get('/api/scrapeItems', (req, res) => {
