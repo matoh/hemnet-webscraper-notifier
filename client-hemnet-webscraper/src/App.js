@@ -1,108 +1,143 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import axios from 'axios';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import {FaHome} from 'react-icons/fa';
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import ListItem from "@material-ui/core/ListItem";
+import List from "@material-ui/core/List";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
+import LinkRounded from "@material-ui/icons/LinkRounded";
+import Link from "@material-ui/core/Link";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import {ExpandMore} from "@material-ui/icons";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+
+
 
 function HemnetItem(props) {
-  return <div>
-    <h2>{props.hemnetItem.title} - <a href={props.hemnetItem.link}>View</a></h2>
-    <h3>Description:</h3>
-    <p>{props.hemnetItem.description}</p>
-    <h3>Apartment was posted: {props.hemnetItem.pubDate}</h3>
-    <hr/>
-  </div>;
-}
-
-function ScrapedHemnetItem(props) {
-  return <div>
-    <h2>{props.scrapedHemnetItem.title[0]} - <a href={props.scrapedHemnetItem.link[0]}>View</a></h2>
-    <h3>Description:</h3>
-    <p>{props.scrapedHemnetItem.description[0]}</p>
-    <h3>Apartment was posted: {props.scrapedHemnetItem.pubDate[0]}</h3>
-    <hr/>
-  </div>;
-}
-
-function App() {
-  return (
-      <Router>
-        <div className="App">
-          <header className="App-header">
-            <Link className="App-link" to="/">
-              <FaHome className="App-icon"/>
-            </Link>
-            <span>Hemnet Webscraper - </span>
-            <Link className="App-link" to="/scrapeItems">
-              Webscrape Actual Items
-            </Link>
-          </header>
+    return (
+        <div>
+            <Divider/>
+            <ListItem>
+                <ExpansionPanel>
+                    <ExpansionPanelSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <ListItemText primary={props.hemnetItem.title}/>
+                        <Typography>{ props.hemnetItem.pubDate}</Typography>
+                        <Link href={props.hemnetItem.link} target="_blank">
+                            <LinkRounded/>
+                        </Link>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <Typography>{props.hemnetItem.description}</Typography>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
+            </ListItem>
         </div>
-
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-        <Switch>
-          <Route path="/scrapeItems">
-            <ScrapeItems/>
-          </Route>
-          <Route path="/">
-            <StoredItems/>
-          </Route>
-        </Switch>
-      </Router>
-  );
+    )
 }
 
 function StoredItems() {
-  const [hemnetItems, setHemnetItems] = useState([]);
+    const [hemnetItems, setHemnetItems] = useState([]);
+    // Similar to componentDidMount and componentDidUpdate
+    useEffect(() => {
+        axios.get('https://asr5nfifuh.execute-api.eu-central-1.amazonaws.com/dev/api/static')
+            .then((items) => {
+                setHemnetItems(items.data);
+            })
+            .catch((err) => {
+                console.log('Error', err);
+            });
+    }, []); // [] preventing to re-call after component update
 
-  // Similar to componentDidMount and componentDidUpdate
-  useEffect(() => {
-    axios.get('http://localhost:3000/api/getStoredItems')
-        .then((items) => {
-          setHemnetItems(items.data.Items);
-        })
-        .catch((err) => {
-          console.log('Error', err);
-        });
-  }, []); // [] preventing to re-call after component update
+    return (
+        <List>
 
-  return <div>
-    <h1>Apartments for Selling</h1>
-    <div>
-      {hemnetItems.sort((a, b) => (a.pubDate > b.pubDate) ? -1 : 1) // Sort by published date from latest
-          .map((item, key) =>
-              <HemnetItem key={item.id} hemnetItem={item}></HemnetItem>,
-          )}
-    </div>
-  </div>;
+            {hemnetItems.sort((a, b) => (a.pubDate > b.pubDate) ? -1 : 1) // Sort by published date from latest
+                .map((item, key) =>
+                    <HemnetItem key={item.id} hemnetItem={item}></HemnetItem>,
+                )}
+        </List>
+    );
 }
 
-function ScrapeItems() {
-  const [scrapedHemnetItems, setScrapedHemnetItems] = useState([]);
 
-  // Similar to componentDidMount and componentDidUpdate
-  useEffect(() => {
-    // TODO: From config, point to remote API
-    axios.get('http://localhost:3000/api/scrapeItems')
-        .then((items) => {
-          console.log('Items', items);
-          setScrapedHemnetItems(items.data);
-        })
-        .catch((err) => {
-          console.log('Error', err);
-        });
-  }, []); // [] preventing to re-call after component update
+function TabPanel(props) {
+    const {children, value, index, ...other} = props;
 
-  return <div>
-    <h1>Scraped Apartments for Selling</h1>
-    <div>
-      {scrapedHemnetItems.sort((a, b) => (a.pubDate > b.pubDate) ? -1 : 1) // Sort by published date from latest
-          .map((item, key) =>
-              <ScrapedHemnetItem key={item.guid} scrapedHemnetItem={item}></ScrapedHemnetItem>,
-          )}
-    </div>
-  </div>;
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`scrollable-force-tabpanel-${index}`}
+            aria-labelledby={`scrollable-force-tab-${index}`}
+            {...other}>
+            <Box p={0}>{children}</Box>
+        </Typography>
+    )
+}
+
+function a11yProps(index) {
+    return {
+        id: `scrollable-force-tab-${index}`,
+        "aria-controls": `scrollable-force-tabpanel-${index}`
+    }
+}
+
+function App() {
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+    return (
+        <div className="App">
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <FaHome className="App-icon"/>
+                    </IconButton>
+                    <Typography variant="h6">
+                        Hemnet Webscraper
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Grid container spacing={1} direction="row" justify="center" alignItems="stretch">
+                <Grid item xs={9}>
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        variant="fullWidth"
+                        scrollButtons="on"
+                        indicatorColor="secondary"
+                        textColor="inherit"
+                        aria-label="scrollable force tabs example">
+                        <Tab label="Posted Today" {...a11yProps(0)} />
+                        <Tab label="Actual Now" {...a11yProps(1)} />
+                    </Tabs>
+                    <TabPanel value={value} index={0}>
+
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <StoredItems/>
+                    </TabPanel>
+                </Grid>
+            </Grid>
+        </div>
+    );
 }
 
 export default App;
