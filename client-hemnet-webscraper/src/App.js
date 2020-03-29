@@ -34,8 +34,7 @@ function HemnetItem(props) {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >
-                        <ListItemText primary={props.hemnetItem.title}/>
-                        <Typography>{ props.hemnetItem.pubDate}</Typography>
+                        <ListItemText primary={props.hemnetItem.title} secondary={props.hemnetItem.pubDate}/>
                         <Link href={props.hemnetItem.link} target="_blank">
                             <LinkRounded/>
                         </Link>
