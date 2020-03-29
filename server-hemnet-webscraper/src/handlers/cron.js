@@ -19,11 +19,7 @@ module.exports = (event, context, callback) => {
               // Format published date from date format: Sat, 07 Mar 2020 12:15:52 +0100
               const itemPubDate = parsePubDate(item.pubDate[0]);
               // Ignore items older than {IGNORE_ITEMS_BEFORE_HOURS} hours
-              if (moment().diff(itemPubDate, 'hours') > ignoreItemsBeforeHours) {
-                console.log(`Ignore items older than ${ignoreItemsBeforeHours} hours`);
-                return false;
-              }
-              return true;
+              return moment().diff(itemPubDate, 'hours') <= ignoreItemsBeforeHours;
             }).map((item) => {
               return axios.get(replaceDirectionMatrixPlaceholders(item))
                   .then(parseDirection)
@@ -32,31 +28,36 @@ module.exports = (event, context, callback) => {
         );
       })
       .then((itemsHemnet) => {
-        for (const itemHemnet of itemsHemnet) {
-          dynamoDb.putItem(itemHemnet)
-              .then((data) => {
-                return ses.sendEmail(toEmails, itemHemnet, sourceEmail)
-                    .then((data) => {
-                      console.log('Email was sent:', data);
-                    })
-                    .catch((err) => {
-                      console.log('Email not sent. Error details:', err);
-                    });
-              })
-              .catch((err) => {
-                if (err.code === 'ConditionalCheckFailedException') {
-                  console.log('Item with ID ' + itemHemnet.id + ' already exist.');
-                } else {
-                  console.log('Error during put DynamoDB event. Error details:', err);
-                }
-              });
-        }
+        return Promise.all(
+            itemsHemnet.map((itemHemnet) => {
+              return dynamoDb.putItem(itemHemnet)
+                  .then((data) => {
+                    return ses.sendEmail(toEmails, itemHemnet, sourceEmail)
+                        .then((data) => {
+                          console.log('Email was sent:', data);
+                          return data;
+                        })
+                        .catch((err) => {
+                          console.log('Email not sent. Error details:', err);
+                        });
+                  })
+                  .catch((err) => {
+                    if (err.code === 'ConditionalCheckFailedException') {
+                      console.log('Item with ID ' + itemHemnet.id + ' already exist.');
+                    } else {
+                      console.log('Error during put DynamoDB event. Error details:', err);
+                    }
+                  });
+            }),
+        );
+      })
+      .then((res) => {
+        callback(null);
       })
       .catch((error) => {
         console.log('Cannot fetch items. Error details: ', error);
+        callback(error);
       });
-
-  callback(null);
 };
 
 /**
