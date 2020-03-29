@@ -8,15 +8,28 @@ Node app scraping Hemnet data and sending notifications after matching saved sea
 * Copy RSS source for scraping data - RSS_HEMNET_URL
 * Verify from and to email addresses in AWS SES
 
-## How to start on local environment
+## How to configure local environment
+Rename file `.env.example` to `.env` and replace configuration values.
+
+## How to start node server in local environment
 Start service with all mandatory environment variables:
 ```sh
 nodemon -r dotenv/config
 ```
-Trigger `handlers/cron.js` manually e.g: (call cronHandler({}, {}, () => {});)
+## How to trigger lambda "function" locally
+Use Serverless invoke local command described: [cli-reference](https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local)
 
-## How to configure local DEV environment
-Rename file `.env.example` to `.env` and replace configuration values.
+Run:
+```sh
+serverless invoke local -f webscrape 
+```
+
+## How to trigger AWS lambda function locally
+Run:
+```sh
+serverless invoke -f webscrape 
+```
+
 
 ## How to deploy on AWS
 Run:
