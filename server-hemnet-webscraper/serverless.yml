@@ -9,9 +9,10 @@ provider:
   runtime: nodejs12.x
   memorySize: 256 # optional, in MB, default is 1024
   timeout: 30 # optional, in seconds, default is 6
+  logRetentionInDays: 14 # Set the default RetentionInDays for a CloudWatch LogGroup
   region: ${self:custom.defaultRegion}
   stage: ${env:NODE_ENV, self:custom.defaultNodeEnv}
-  environment: # Added from dotenv plugin
+  environment: # Service wide environment variables, which are added from dotenv plugin
   iamRoleStatements:
     - Effect: Allow
       Action:

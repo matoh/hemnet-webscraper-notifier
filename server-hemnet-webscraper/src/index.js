@@ -4,8 +4,10 @@ const express = require('express');
 const cors = require('cors');
 const serverless = require('serverless-http');
 const cronHandler = require('./handlers/cron');
+const {ItemHemnet} = require('./models/itemHemnet');
 const {dynamoDb} = require('./clients/awsHemnet');
 const {fetchItemsFromHemnet} = require('./services/searchService');
+const {getDirectionMatrix} = require('./services/directionService');
 
 const app = express();
 app.use(cors());
@@ -18,6 +20,14 @@ app.get('/', (req, res) => {
 
 app.get('/api/scrapeItems', (req, res) => {
   fetchItemsFromHemnet(rssHemnetUrl)
+      .then((items) => {
+        return Promise.all(
+            items.map((item) => {
+              return getDirectionMatrix(item)
+                  .then((directionMatrix) => new ItemHemnet(item, directionMatrix));
+            }),
+        );
+      })
       .then((items) => {
         res.send(items);
       })
