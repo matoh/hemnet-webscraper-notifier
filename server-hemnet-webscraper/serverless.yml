@@ -6,7 +6,7 @@ plugins:
 provider:
   name: aws # https://serverless.com/framework/docs/providers/aws/
   endpointType: REGIONAL
-  runtime: nodejs12.x
+  runtime: nodejs10.x
   memorySize: 256 # optional, in MB, default is 1024
   timeout: 30 # optional, in seconds, default is 6
   logRetentionInDays: 14 # Set the default RetentionInDays for a CloudWatch LogGroup
